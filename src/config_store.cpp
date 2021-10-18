@@ -23,11 +23,24 @@ m_ros_standard_output_(false)
 //- Private  methods                                                  -//
 //---------------------------------------------------------------------//
 
-void ConfigStore::loadCommunicationParameters(rclcpp::Node& ref_node_handle)
+void ConfigStore::loadDriverParameters(const rclcpp::Node& ref_node_handle)
+{
+  m_rate_frequency_ = getParameter<uint32_t>(ref_node_handle, "driver.frequency", 400);
+}
+
+void ConfigStore::loadOdomParameters(const rclcpp::Node& ref_node_handle)
+{
+  ref_node_handle.get_parameter_or<bool>       ("odometry.enable"   , m_odom_enable_          , false);
+  ref_node_handle.get_parameter_or<bool>       ("odometry.publishTf", m_odom_publish_tf_      , false);
+  ref_node_handle.get_parameter_or<std::string>("odometry.odomFrameId", m_odom_frame_id_      , "odom");
+  ref_node_handle.get_parameter_or<std::string>("odometry.baseFrameId", m_odom_base_frame_id_ , "base_link");
+  ref_node_handle.get_parameter_or<std::string>("odometry.initFrameId", m_odom_init_frame_id_ , "map");
+}
+
+void ConfigStore::loadCommunicationParameters(const rclcpp::Node& ref_node_handle)
 {
   ref_node_handle.get_parameter_or<bool>("confWithRos", m_configure_through_ros_, false);
   
-
   if (ref_node_handle.has_parameter("uartConf.portName"))
   {
     m_serial_communication_ = true; 
@@ -49,7 +62,6 @@ void ConfigStore::loadCommunicationParameters(rclcpp::Node& ref_node_handle)
   else
   {
     rclcpp::exceptions::throw_from_rcl_error(RMW_RET_ERROR, "SBG DRIVER - Invalid communication interface parameters.");
-    //throw rclcpp::exceptions("SBG DRIVER - Invalid communication interface parameters.");
   }
 }
 
@@ -143,6 +155,40 @@ void ConfigStore::loadOutputConfiguration(const rclcpp::Node& ref_node_handle, c
   log_output.output_mode    = getParameter<SbgEComOutputMode>(ref_node_handle, ref_key, SBG_ECOM_OUTPUT_MODE_DISABLED);
 
   m_output_modes_.push_back(log_output);
+}
+
+void ConfigStore::loadOutputFrameParameters(const rclcpp::Node& ref_node_handle)
+{
+  ref_node_handle.get_parameter_or<bool>("output.use_enu", m_use_enu_, false);
+
+  if (m_use_enu_)
+  {
+    ref_node_handle.get_parameter_or<std::string>("output.frame_id", m_frame_id_, "imu_link");
+  }
+  else
+  {
+    ref_node_handle.get_parameter_or<std::string>("output.frame_id", m_frame_id_, "imu_link_ned");
+  }
+}
+
+void ConfigStore::loadOutputTimeReference(const rclcpp::Node& ref_node_handle, const std::string& ref_key)
+{
+  std::string time_reference;
+
+  ref_node_handle.get_parameter_or<std::string>(ref_key, time_reference, "ros");
+
+  if (time_reference == "ros")
+  {
+    m_time_reference_ = TimeReference::ROS;
+  }
+  else if (time_reference == "ins_unix")
+  {
+    m_time_reference_ = TimeReference::INS_UNIX;
+  }
+  else
+  {
+    rclcpp::exceptions::throw_from_rcl_error(RMW_RET_ERROR, "unknown time reference: " + time_reference);
+  }
 }
 
 //---------------------------------------------------------------------//
@@ -284,12 +330,54 @@ uint32_t ConfigStore::getReadingRateFrequency(void) const
   return m_rate_frequency_;
 }
 
+const std::string &ConfigStore::getFrameId(void) const
+{
+  return m_frame_id_;
+}
+
+bool ConfigStore::getUseEnu(void) const
+{
+  return m_use_enu_;
+}
+
+sbg::TimeReference ConfigStore::getTimeReference(void) const
+{
+  return m_time_reference_;
+}
+
+bool ConfigStore::getOdomEnable(void) const
+{
+  return m_odom_enable_;
+}
+
+bool ConfigStore::getOdomPublishTf(void) const
+{
+  return m_odom_publish_tf_;
+}
+
+const std::string &ConfigStore::getOdomFrameId(void) const
+{
+  return m_odom_frame_id_;
+}
+
+const std::string &ConfigStore::getOdomBaseFrameId(void) const
+{
+  return m_odom_base_frame_id_;
+}
+
+const std::string &ConfigStore::getOdomInitFrameId(void) const
+{
+  return m_odom_init_frame_id_;
+}
+
 //---------------------------------------------------------------------//
 //- Operations                                                        -//
 //---------------------------------------------------------------------//
 
-void ConfigStore::loadFromRosNodeHandle(rclcpp::Node& ref_node_handle)
+void ConfigStore::loadFromRosNodeHandle(const rclcpp::Node& ref_node_handle)
 {
+  loadDriverParameters(ref_node_handle);
+  loadOdomParameters(ref_node_handle);
   loadCommunicationParameters(ref_node_handle);
   loadSensorParameters(ref_node_handle);
   loadImuAlignementParameters(ref_node_handle);
@@ -297,6 +385,9 @@ void ConfigStore::loadFromRosNodeHandle(rclcpp::Node& ref_node_handle)
   loadMagnetometersParameters(ref_node_handle);
   loadGnssParameters(ref_node_handle);
   loadOdometerParameters(ref_node_handle);
+  loadOutputFrameParameters(ref_node_handle);
+
+  loadOutputTimeReference(ref_node_handle, "output/time_reference");
 
   loadOutputConfiguration(ref_node_handle, "output.log_status", SBG_ECOM_CLASS_LOG_ECOM_0, SBG_ECOM_LOG_STATUS);
   loadOutputConfiguration(ref_node_handle, "output.log_imu_data", SBG_ECOM_CLASS_LOG_ECOM_0, SBG_ECOM_LOG_IMU_DATA);
@@ -321,5 +412,4 @@ void ConfigStore::loadFromRosNodeHandle(rclcpp::Node& ref_node_handle)
   loadOutputConfiguration(ref_node_handle, "output.log_imu_short", SBG_ECOM_CLASS_LOG_ECOM_0, SBG_ECOM_LOG_IMU_SHORT);
 
   ref_node_handle.get_parameter_or<bool>("output.ros_standard", m_ros_standard_output_, false);
-  m_rate_frequency_ = getParameter<uint32_t>(ref_node_handle, "output.frequency", 0);
 }

@@ -1,6 +1,6 @@
 # sbg_driver
 
-[![Build Status](https://img.shields.io/jenkins/build?jobUrl=http%3A%2F%2Fbuild.ros.org%2Fjob%2FMdev__sbg_driver__ubuntu_bionic_amd64%2F&label=Ubuntu%20bionic)](http://build.ros.org/job/Mdev__sbg_driver__ubuntu_bionic_amd64/) [![Build Status](https://img.shields.io/jenkins/build?jobUrl=http%3A%2F%2Fbuild.ros.org%2Fjob%2FKdev__sbg_driver__ubuntu_xenial_amd64%2F&label=Ubuntu%20xenial)](http://build.ros.org/job/Kdev__sbg_driver__ubuntu_xenial_amd64/)
+TODO - add build status
 
 ## Overview
 ROS package for SBG Systems IMU.<br />
@@ -9,13 +9,12 @@ The driver allows the user to configure the IMU (if possible, according to the d
 <i>Initial work has been done by [ENSTA Bretagne](https://github.com/ENSTABretagneRobotics).</i>
 
 **Author : [SBG Systems](https://www.sbg-systems.com/)<br />
-Maintainer : Hadrien Pomès, hadrien.pomes@sbg-systems.com**
+Maintainer : SBG Systems, support@sbg-systems.com**
 
 ## Installation
 ### Installation from Packages
 User can install the sbg_ros2_driver through the standard ROS installation system.
-* Dashing ```sudo apt-get install ros-dashing-sbg-driver```
-* Eloquent ```sudo apt-get install ros-eloquent-sbg-driver```
+* Galactic ```sudo apt-get install ros-galactic-sbg-driver```
 * Foxy ```sudo apt-get install ros-foxy-sbg-driver```
 
 ### Building from sources
@@ -30,8 +29,8 @@ User can install the sbg_ros2_driver through the standard ROS installation syste
 
 ```
 cd colcon_ws/src
-git clone https://github.com/SBG-Systems/sbg_ros2.git
-cd sbg_ros2
+git clone https://github.com/SBG-Systems/sbg_ros2_driver.git
+cd sbg_ros2_driver
 rosdep update
 rosdep install --from-path .
 cd ../..
@@ -82,6 +81,9 @@ Default config file for an Ellipse-E with an external antenna and external Gnss.
 
 * **ellipse_N_default.yaml** <br />
 Default config file for an Ellipse-N with an external antenna and internal Gnss.
+
+* **ellipse_D_default.yaml** <br />
+Default config file for an Ellipse-D.
 
 ## Launch files
 ### Default launch files
@@ -205,6 +207,11 @@ For each ROS standard, you have to activate the needed SBG outputs.
   Navigation satellite fix for any Global Navigation Satellite System.
   Requires `/sbg/gps_pos`.
   
+* **`/imu/odometry`** [nav_msgs/Odometry](http://docs.ros.org/en/melodic/api/nav_msgs/html/msg/Odometry.html)
+
+  UTM projected position relative to the first valid INS position.
+  Requires `/sbg/imu_data` and `/sbg/ekv_nav` and either `/sbg/ekf_euler` or `/sbg/ekf_quat`.
+  Disabled by default, set odometry.enable in configuration file.
 
 ### sbg_device_mag
 The sbg_device_mag node handles the magnetic calibration for suitable devices.
@@ -276,17 +283,51 @@ Once it is done, configuration file could be updated `portName: "/dev/sbg"`.
 
 See the docs folder, to see an example of rules with the corresponding screenshot using the udev functions.
 
-### Synchronize the ROS messages from an external time source
-#### No external source
-When no external time source is available, the header time of messages is the system Epoch (Unix) processing time of the SBG callback, given by the ```ros::Time::now()```.
+### Time source & reference
+ROS uses an internal system time to time stamp messages. This time stamp is generally gathered when the message is processed and published.
+As a result, the message is not time stamped accurately due to transmission and processing delays.
 
-#### External Gnss receiver and/or External antenna
-When the SBG device is connected with an external Gnss receiver, if the device receives a full valid SBG Utc log, i.e :
-* A stable input clock to be synchronized with the internal clock
-* A valid Utc time data (with or without the leap second)
-* The clock has converged to the PPS
+SBG Systems INS however provides a very accurate timing based on GNSS time if available. The following conditions have to be met to get
+absolute accurate timing information:
+* The ELLIPSE-N or D should have a connected GNSS antenna with internal GNSS enabled
+* The ELLIPSE-E should be connected to an external GNSS receiver with a PPS signal
+* A valid GNSS position has to be available to get UTC data
+* The ELLIPSE internal clock should be aligned to PPS signal (clock status)
+* The ELLIPSE should be setup to send SBG_ECOM_LOG_UTC message
 
-then, the time header will be computed from the last received Utc log and the device timestamp given by the internal clock. 
+You can select which time source to use with the parameter `time_reference` to time stamp messages published by this driver:
+* `ros`: The header.stamp member contains the current ROS system time when the message has been processed.
+* `ins_unix`: The header.stamp member contains an absolute and accurate time referenced to UNIX epoch (00:00:00 UTC on 1 January 1970)
+
+Configuration example to use an absolute and accurate time reference to UNIX epoch:
+```
+# Time reference:
+time_reference: "ins_unix"
+```
+
+### Change frame parameters
+#### Frame ID
+The frame_id of the header can be set with this parameter:
+```
+# Frame convention
+frame_id: "imu_link_ned"
+```
+
+#### Frame convention
+The frame convention can be set to NED or ENU
+* In NED convention axises are the same as device axises.
+* In ENU convention (x = X, y = -Y, z = -Z).
+```
+# Frame convention:
+use_enu: true
+```
+
+## Troubleshooting
+
+If you experience higher latency than expected and have connected the IMU via an USB interface, you can enable the serial driver low latency mode:
+```
+/bin/setserial /dev/<device> low_latency
+```
 
 ## Contributing
 ### Bugs and issues
