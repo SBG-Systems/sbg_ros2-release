@@ -1,0 +1,12 @@
+Source: ros-galactic-sbg-driver
+Section: misc
+Priority: optional
+Maintainer: SBG Systems <support@sbg-systems.com>
+Build-Depends: debhelper (>= 9.0.0), libboost-all-dev, ros-galactic-ament-cmake, ros-galactic-geometry-msgs, ros-galactic-nav-msgs, ros-galactic-rclcpp, ros-galactic-rosidl-default-generators, ros-galactic-sensor-msgs, ros-galactic-std-msgs, ros-galactic-std-srvs, ros-galactic-tf2-geometry-msgs, ros-galactic-tf2-msgs, ros-galactic-tf2-ros, ros-galactic-ros-workspace, ros-galactic-rosidl-typesupport-fastrtps-c, ros-galactic-rosidl-typesupport-fastrtps-cpp
+Homepage: http://wiki.ros.org/sbg_driver
+Standards-Version: 3.9.2
+
+Package: ros-galactic-sbg-driver
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libboost-all-dev, ros-galactic-geometry-msgs, ros-galactic-nav-msgs, ros-galactic-rclcpp, ros-galactic-rosidl-default-runtime, ros-galactic-sensor-msgs, ros-galactic-std-msgs, ros-galactic-std-srvs, ros-galactic-tf2-geometry-msgs, ros-galactic-tf2-msgs, ros-galactic-tf2-ros, ros-galactic-ros-workspace
+Description: ROS driver package for communication with the SBG navigation systems.
