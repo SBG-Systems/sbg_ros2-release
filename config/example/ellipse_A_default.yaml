@@ -139,7 +139,7 @@
       # 2 Measurement is always accepted
       magnetometerRejectMode: 1
     
-      # Theses parameters are only used for a calibration run
+      # These parameters are only used for a calibration run
       calibration:
         # 1 2D Tell the device that the magnetic calibration will be performed with limited motions. 
         #     This calibration mode is only designed to be used when roll and pitch motions are less than ± 5°. 
@@ -156,11 +156,11 @@
     
     
     # GNSS configuration
-    # Note: Secondary level arms should only be considered in case of dual antenna GNSS receiver. It can be left to 0 otherwise.
+    # Note: Secondary lever arm should only be considered in case of dual antenna GNSS receiver. It can be left to 0 otherwise.
     gnss:
       # Gnss Model Id
       # 101 Used on Ellipse-N to setup the internal GNSS in GPS+GLONASS
-      # 102 Default mode for Ellipse-E connection to external GNSS
+      # 102 Default mode for Ellipse-E connection to external NMEA GNSS
       # 103 Used on Ellipse-N to setup the internal GNSS in GPS+BEIDOU
       # 104 Used on Ellipse-E to setup a connection to ublox in read only mode.
       # 106 Used on Ellipse-E to setup a connection to Novatel receiver in read only mode.
@@ -280,6 +280,12 @@
       log_ekf_quat: 0
       # Position and velocities in NED coordinates with the accuracies on each axis
       log_ekf_nav: 0
+      # Velocity expressed in the INS body/vehicle frame
+      log_ekf_vel_body: 0
+      # Rotations rate and accelerations in the INS body/vehicle frame
+      log_ekf_rot_accel_body: 0
+      # Rotations rate and accelerations in North, East, Down (NED) navigation frame
+      log_ekf_rot_accel_ned: 0
       # Heave, surge and sway and accelerations on each axis for up to 4 points
       log_ship_motion: 8
       # Provides UTC time reference

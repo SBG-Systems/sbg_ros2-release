@@ -9,11 +9,12 @@ find_package(std_srvs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(nav_msgs REQUIRED)
+find_package(rtcm_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2_msgs REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
+find_package(nmea_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
-find_package(Boost REQUIRED)
 
 ################################################
 ## Declare ROS messages, services and actions ##
@@ -28,9 +29,11 @@ set (USED_LIBRARIES
   std_srvs
   geometry_msgs
   nav_msgs
+  rtcm_msgs
   tf2_ros
   tf2_msgs
   tf2_geometry_msgs
+  nmea_msgs
 )
 
 set (msg_files
@@ -62,6 +65,8 @@ set (msg_files
   "msg/SbgMagCalib.msg"
   "msg/SbgStatusAiding.msg"
   "msg/SbgEkfStatus.msg"
+  "msg/SbgEkfVelBody.msg"
+  "msg/SbgEkfRotAccel.msg"
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}
@@ -83,16 +88,10 @@ ament_export_dependencies(rosidl_default_runtime)
 add_subdirectory(external/sbgECom)
 
 include_directories(
-  #${catkin_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/include/sbg_driver/
   ${PROJECT_SOURCE_DIR}/external/sbgECom/common
   ${PROJECT_SOURCE_DIR}/external/sbgECom/src
 )
-
-## Add cmake target dependencies of the library
-## as an example, code may need to be generated before libraries
-## either from message generation or dynamic reconfigure
-# add_dependencies(sbg ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Define common resources.
 set (SBG_COMMON_RESOURCES
@@ -101,26 +100,37 @@ set (SBG_COMMON_RESOURCES
   src/message_wrapper.cpp
   src/config_store.cpp
   src/sbg_device.cpp
+  src/sbg_utm.cpp
+  src/sbg_ros_helpers.cpp
 )
 
 ## Declare a C++ executable
 add_executable(sbg_device ${SBG_COMMON_RESOURCES} src/main.cpp)
 add_dependencies(sbg_device ${PROJECT_NAME})
+if(WIN32)
+target_compile_options(sbg_device PRIVATE)
+else()
 target_compile_options(sbg_device PRIVATE -Wall -Wextra)
+endif()
 
 add_executable(sbg_device_mag ${SBG_COMMON_RESOURCES} src/main_mag.cpp)
 add_dependencies(sbg_device_mag ${PROJECT_NAME})
+if(WIN32)
+target_compile_options(sbg_device_mag PRIVATE)
+else()
 target_compile_options(sbg_device_mag PRIVATE -Wall -Wextra)
+endif()
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(sbg_device ${catkin_LIBRARIES} sbgECom)
-target_link_libraries(sbg_device_mag ${catkin_LIBRARIES} sbgECom)
+target_link_libraries(sbg_device sbgECom)
+target_link_libraries(sbg_device_mag sbgECom)
 
 ament_target_dependencies(sbg_device ${USED_LIBRARIES}) 
 ament_target_dependencies(sbg_device_mag ${USED_LIBRARIES})
 
-rosidl_target_interfaces(sbg_device ${PROJECT_NAME} "rosidl_typesupport_cpp")
-rosidl_target_interfaces(sbg_device_mag ${PROJECT_NAME} "rosidl_typesupport_cpp")
+rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+target_link_libraries(sbg_device "${cpp_typesupport_target}")
+target_link_libraries(sbg_device_mag "${cpp_typesupport_target}")
 
 set_property(TARGET sbg_device PROPERTY CXX_STANDARD 14)
 set_property(TARGET sbg_device_mag PROPERTY CXX_STANDARD 14)
@@ -129,9 +139,6 @@ set_property(TARGET sbg_device_mag PROPERTY CXX_STANDARD 14)
 ## Install ##
 #############
 
-# all install targets should use catkin DESTINATION variables
-# See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
-
 ## Mark executables and/or libraries for installation
 install(TARGETS sbg_device sbg_device_mag
    DESTINATION lib/${PROJECT_NAME}
@@ -139,7 +146,7 @@ install(TARGETS sbg_device sbg_device_mag
 
 ## Mark cpp header files for installation
 install(DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION include/${PROJECT_NAME}  #${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  DESTINATION include/${PROJECT_NAME}
   FILES_MATCHING PATTERN "*.h"
   PATTERN ".svn" EXCLUDE
   PATTERN ".git" EXCLUDE
@@ -156,7 +163,7 @@ install(DIRECTORY config/
 
 
 ###################################
-## catkin specific configuration ##
+## ament specific configuration  ##
 ###################################
 
 ament_export_dependencies(
@@ -166,6 +173,7 @@ ament_export_dependencies(
     std_srvs
     geometry_msgs
     nav_msgs
+    rtcm_msgs
     tf2_ros
     tf2_msgs
     tf2_geometry_msgs
