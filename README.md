@@ -1,3 +1,26 @@
+## sbg_driver (humble) - 3.2.0-1
+
+The packages in the `sbg_driver` repository were released into the `humble` distro by running `/usr/bin/bloom-release --rosdistro humble sbg_driver` on `Thu, 17 Oct 2024 13:27:36 -0000`
+
+The `sbg_driver` package was released.
+
+Version of package(s) in repository `sbg_driver`:
+
+- upstream repository: https://github.com/SBG-Systems/sbg_ros2.git
+- release repository: unknown
+- rosdistro version: `null`
+- old version: `null`
+- new version: `3.2.0-1`
+
+Versions of tools used:
+
+- bloom version: `0.12.0`
+- catkin_pkg version: `1.0.0`
+- rosdep version: `0.25.1`
+- rosdistro version: `1.0.0`
+- vcstools version: `0.1.42`
+
+
 ## sbg_driver (galactic) - 3.1.0-1
 
 The packages in the `sbg_driver` repository were released into the `galactic` distro by running `/usr/bin/bloom-release sbg_driver --rosdistro galactic` on `Mon, 18 Oct 2021 14:14:23 -0000`
