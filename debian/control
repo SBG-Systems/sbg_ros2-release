@@ -1,0 +1,12 @@
+Source: ros-iron-sbg-driver
+Section: misc
+Priority: optional
+Maintainer: SBG Systems <support@sbg-systems.com>
+Build-Depends: debhelper (>= 9.0.0), ros-iron-ament-cmake, ros-iron-geometry-msgs, ros-iron-nav-msgs, ros-iron-nmea-msgs, ros-iron-rclcpp, ros-iron-rosidl-default-generators, ros-iron-rtcm-msgs, ros-iron-sensor-msgs, ros-iron-std-msgs, ros-iron-std-srvs, ros-iron-tf2-geometry-msgs, ros-iron-tf2-msgs, ros-iron-tf2-ros, ros-iron-ros-workspace, ros-iron-rosidl-typesupport-fastrtps-c, ros-iron-rosidl-typesupport-fastrtps-cpp
+Homepage: http://wiki.ros.org/sbg_driver
+Standards-Version: 3.9.2
+
+Package: ros-iron-sbg-driver
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-iron-geometry-msgs, ros-iron-nav-msgs, ros-iron-nmea-msgs, ros-iron-rclcpp, ros-iron-rosidl-default-runtime, ros-iron-rtcm-msgs, ros-iron-sensor-msgs, ros-iron-std-msgs, ros-iron-std-srvs, ros-iron-tf2-geometry-msgs, ros-iron-tf2-msgs, ros-iron-tf2-ros, ros-iron-ros-workspace
+Description: ROS driver package for communication with the SBG navigation systems.
