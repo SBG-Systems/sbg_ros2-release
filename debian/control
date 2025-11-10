@@ -1,0 +1,12 @@
+Source: ros-rolling-sbg-driver
+Section: misc
+Priority: optional
+Maintainer: SBG Systems <support@sbg-systems.com>
+Build-Depends: debhelper (>= 9.0.0), ros-rolling-ament-cmake, ros-rolling-geometry-msgs, ros-rolling-nav-msgs, ros-rolling-nmea-msgs, ros-rolling-rclcpp, ros-rolling-rosidl-default-generators, ros-rolling-rtcm-msgs, ros-rolling-sensor-msgs, ros-rolling-std-msgs, ros-rolling-std-srvs, ros-rolling-tf2-geometry-msgs, ros-rolling-tf2-msgs, ros-rolling-tf2-ros, ros-rolling-urdf, ros-rolling-ros-workspace, ros-rolling-rosidl-typesupport-fastrtps-c, ros-rolling-rosidl-typesupport-fastrtps-cpp
+Homepage: http://wiki.ros.org/sbg_driver
+Standards-Version: 3.9.2
+
+Package: ros-rolling-sbg-driver
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-rolling-geometry-msgs, ros-rolling-nav-msgs, ros-rolling-nmea-msgs, ros-rolling-rclcpp, ros-rolling-rosidl-default-runtime, ros-rolling-rtcm-msgs, ros-rolling-sensor-msgs, ros-rolling-std-msgs, ros-rolling-std-srvs, ros-rolling-tf2-geometry-msgs, ros-rolling-tf2-msgs, ros-rolling-tf2-ros, ros-rolling-urdf, ros-rolling-xacro, ros-rolling-ros-workspace
+Description: ROS driver package for communication with the SBG navigation systems.
