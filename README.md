@@ -1,3 +1,26 @@
+## sbg_driver (lyrical) - 3.4.0-1
+
+The packages in the `sbg_driver` repository were released into the `lyrical` distro by running `/usr/bin/bloom-release --rosdistro lyrical --track lyrical sbg_driver` on `Wed, 22 Jul 2026 18:57:02 -0000`
+
+The `sbg_driver` package was released.
+
+Version of package(s) in repository `sbg_driver`:
+
+- upstream repository: https://github.com/SBG-Systems/sbg_ros2.git
+- release repository: unknown
+- rosdistro version: `null`
+- old version: `null`
+- new version: `3.4.0-1`
+
+Versions of tools used:
+
+- bloom version: `0.14.3`
+- catkin_pkg version: `1.1.0`
+- rosdep version: `0.26.0`
+- rosdistro version: `1.0.1`
+- vcstools version: `0.1.42`
+
+
 ## sbg_driver (rolling) - 3.4.0-1
 
 The packages in the `sbg_driver` repository were released into the `rolling` distro by running `/usr/bin/bloom-release --rosdistro rolling --track rolling sbg_driver` on `Wed, 22 Jul 2026 18:54:45 -0000`
