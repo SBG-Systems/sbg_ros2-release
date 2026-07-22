@@ -1,0 +1,12 @@
+Source: ros-lyrical-sbg-driver
+Section: misc
+Priority: optional
+Maintainer: "SBG Systems" <support@sbg-systems.com>
+Build-Depends: debhelper (>= 9.0.0), ros-lyrical-ament-cmake, ros-lyrical-geometry-msgs, ros-lyrical-nav-msgs, ros-lyrical-nmea-msgs, ros-lyrical-rclcpp, ros-lyrical-rosidl-default-generators, ros-lyrical-rtcm-msgs, ros-lyrical-sensor-msgs, ros-lyrical-std-msgs, ros-lyrical-std-srvs, ros-lyrical-tf2-geometry-msgs, ros-lyrical-tf2-msgs, ros-lyrical-tf2-ros, ros-lyrical-urdf, ros-lyrical-ros-workspace, ros-lyrical-rosidl-typesupport-fastrtps-c, ros-lyrical-rosidl-typesupport-fastrtps-cpp
+Homepage: http://wiki.ros.org/sbg_driver
+Standards-Version: 3.9.2
+
+Package: ros-lyrical-sbg-driver
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-lyrical-geometry-msgs, ros-lyrical-nav-msgs, ros-lyrical-nmea-msgs, ros-lyrical-rclcpp, ros-lyrical-rosidl-default-runtime, ros-lyrical-rtcm-msgs, ros-lyrical-sensor-msgs, ros-lyrical-std-msgs, ros-lyrical-std-srvs, ros-lyrical-tf2-geometry-msgs, ros-lyrical-tf2-msgs, ros-lyrical-tf2-ros, ros-lyrical-urdf, ros-lyrical-xacro, ros-lyrical-ros-workspace
+Description: ROS driver package for communication with the SBG navigation systems.
