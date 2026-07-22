@@ -121,7 +121,7 @@ tracks:
     - git-bloom-generate -y rosdynrpm --prefix release/:{ros_distro} :{ros_distro}
       -i :{release_inc} --require-os fedora rhel
     devel_branch: null
-    last_version: 3.3.2
+    last_version: 3.4.0
     name: sbg_driver
     patches: null
     release_inc: '1'
